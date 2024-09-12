@@ -7,23 +7,33 @@ class MazeGenerator {
     }
     
     generate() {
-        var arr = this.getNeighbors(0,6);
-        alert(arr[0] + " " + arr[1]);
-        alert(arr[2] + " " + arr[3]);
+        var maze = []; 
+
+        var visited = new Array(this.size);
+        for (var i = 0; i < this.size; i++) {
+            visited[i] = false;
+        }
+
         var queue = [], neigh = [], node = [0,0];
         queue.push(node);
         while (queue.length) {
+            
             node = queue.shift();
-            console.log(node);
-            neigh = this.getNeighbors();
-            neigh.forEach((n)=>{
-                if ((n != null) || (n != node)) {
-                    queue.push(n);
+            maze.push(node);
+
+            if (node[0] == 100 && node[1] == 220) break;
+            neigh = this.getNeighbors(node[0], node[1]);
+            neigh.forEach((n) => {
+
+                if ((n != null) && (!visited[(n[0]*this.width) + n[1]]) && ((n[0] != node[0]) || (n[1] != node[1]))) {
+                    queue.unshift(n);
+                    visited[(n[0]*this.width) + n[1]] = true;
+                    console.log(n);
                 }
             });
-            
-            
         }
+
+        return maze;
     }
     
     getNeighbors(x, y) {
@@ -41,6 +51,10 @@ class MazeGenerator {
             arr[3] = [x, y+1];
         }
         return arr;
+    }
+
+    get size(){
+        return (this.width * this. height);
     }
     
 }
