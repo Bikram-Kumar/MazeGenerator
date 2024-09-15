@@ -19,29 +19,29 @@ class MazeGenerator {
         while (stack.length) {
             
             node = stack.pop();
-            maze.push(node);
             index = this.getIndexOf(node);
             
-            if (visited[index]) {
-
-                continue;
+            if (!visited[index]) {
+                visited[index] = true;
             }
             
-            visited[index] = true;
+            maze.push(node);
+            
             neigh = this.getNeighbors(node);
             this.randomizeNeighborsArray(neigh);
-            console.log("node");
-            console.log(node);
-            // console.log(neigh);
             
             for (var n of neigh) {
                 if ((n != null) && (!visited[this.getIndexOf(n)]) && (!node.equals(n))) {
+                    stack.push(node);
                     stack.push(n);
-                    console.log(n);
+                    break;
                 }
             }
             
+
         }
+
+        
 
         return maze;
         

@@ -7,7 +7,7 @@ function main () {
     
     // var imgData = new ImageData(255, 255);
 
-    var n = 8;
+    var n = 32;
     
     var canvasDim = new Vector2(n, n);
     var mazeGen = new MazeGenerator(canvasDim);
@@ -16,24 +16,30 @@ function main () {
     
     
     // console.log(maze);
-    var fillStyles = [
-        "#00ff00",
+    var strokeStyles = [
+        // "#00ff00",
         "#ffffff",
+        // "#ff0000",
+        // "#0000ff",
     ];
+    ctx.lineWidth = 6;
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
     
     var i = 0;
     drawMaze();
-
+    
     function drawMaze() {
-        ctx.fillStyle = fillStyles[i % fillStyles.length]
+        ctx.strokeStyle = strokeStyles[i % strokeStyles.length]
         
-        ctx.fillRect(256/n*maze[i].x, 256/n*maze[i].y, (256/n)/2, (256/n)/2);
-        
+        ctx.lineTo(256/n*maze[i].x, 256/n*maze[i].y);
+        ctx.stroke();
         i++;
         if (i < maze.length) {
             setTimeout(() => {
                 drawMaze();
-            }, 100);
+            }, 10);
         } else {
             // location.reload();
         }
