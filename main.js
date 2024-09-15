@@ -10,8 +10,9 @@ function main () {
     var n = 32;
     
     var canvasDim = new Vector2(n, n);
-    var mazeGen = new MazeGenerator(canvasDim);
-    var maze = mazeGen.generate();
+    var mazeGen = new MazeManager(canvasDim);
+    mazeGen.generate();
+    var maze = mazeGen.maze;
     
     
     
@@ -22,10 +23,10 @@ function main () {
         // "#ff0000",
         // "#0000ff",
     ];
-    ctx.lineWidth = 6;
+    ctx.lineWidth = 256/n*0.75;
     ctx.lineJoin = "round";
     ctx.beginPath();
-    ctx.moveTo(0, 0);
+    ctx.moveTo(0+ctx.lineWidth/2, 0+ctx.lineWidth/2);
     
     var i = 0;
     drawMaze();
@@ -33,7 +34,7 @@ function main () {
     function drawMaze() {
         ctx.strokeStyle = strokeStyles[i % strokeStyles.length]
         
-        ctx.lineTo(256/n*maze[i].x, 256/n*maze[i].y);
+        ctx.lineTo((256/n*maze[i].x)+ctx.lineWidth/2, (256/n*maze[i].y) + ctx.lineWidth/2);
         ctx.stroke();
         i++;
         if (i < maze.length) {

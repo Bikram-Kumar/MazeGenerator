@@ -1,12 +1,15 @@
-class MazeGenerator {
+class MazeManager {
     dimension; // Vector2
+    maze;
 
     constructor (dimension) {
         this.dimension = dimension;
     }
-    
+
+
+    // generates a new maze and stores it in `this.maze`
     generate() {
-        var maze = []; 
+        this.maze = []; 
         
         var visited = new Array(this.size);
         for (var i = 0; i < this.size; i++) {
@@ -25,13 +28,13 @@ class MazeGenerator {
                 visited[index] = true;
             }
             
-            maze.push(node);
+            this.maze.push(node);
             
             neigh = this.getNeighbors(node);
-            this.randomizeNeighborsArray(neigh);
+            MazeManager.randomizeNeighborsArray(neigh);
             
             for (var n of neigh) {
-                if ((n != null) && (!visited[this.getIndexOf(n)]) && (!node.equals(n))) {
+                if ((n != null) && (!visited[this.getIndexOf(n)]) && (!Vector2.areEqual(n, node))) {
                     stack.push(node);
                     stack.push(n);
                     break;
@@ -40,13 +43,22 @@ class MazeGenerator {
             
 
         }
-
-        
-
-        return maze;
-        
         
     }
+
+
+    // finds and returns shortest path between `start` and `end` nodes in current `this.maze`
+    findShortestPath(start, end) {
+        var path = [];
+
+
+        return path;
+    }
+
+
+
+
+
     
     getNeighbors(vec) {
         var arr = [null, null, null, null];
@@ -66,7 +78,7 @@ class MazeGenerator {
     }
 
     // randomize array by swapping random elements 2 times
-    randomizeNeighborsArray(arr) {
+    static randomizeNeighborsArray(arr) {
         var rands = [];
         for (let i = 0; i < 4; i++) {
             rands[i] = Math.floor(Math.random() * 4);
@@ -75,6 +87,8 @@ class MazeGenerator {
         arr.swap(rands[2], rands[3]);
     }
 
+
+    // returns a unique index to assign to the node in graph
     getIndexOf(node) {
 
         return (node.x + (node.y * this.dimension.x));

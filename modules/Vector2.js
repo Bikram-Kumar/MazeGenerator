@@ -7,8 +7,11 @@ class Vector2 {
         this.y = y;
     }
 
-    // compare this vector with vec
-    equals(vec) {
-        return ((this.x == vec.x) && (this.y == vec.y));
+    static areEqual(vec1, vec2) {
+        return ((vec1.x == vec2.x) && (vec1.y == vec2.y));
+    }
+
+    static getManhattanDist(vec1, vec2) {
+        return (Math.abs(vec1.x-vec2.x) + Math.abs(vec1.y-vec2.y));
     }
 }
