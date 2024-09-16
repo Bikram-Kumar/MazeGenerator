@@ -11,14 +11,14 @@ function main () {
     
     // var imgData = new ImageData(255, 255);
 
-    var n = 16;
+    var n = 32;
     
     var canvasDim = new Vector2(n, n);
     var mazeGen = new MazeManager(canvasDim);
     mazeGen.generate();
     var maze = mazeGen.maze;
-    var start = new Vector2(0, 0);
-    var end = new Vector2(n-1, n-1);
+    var start = new Vector2(0, Math.floor(Math.random()*n));
+    var end = new Vector2(n-1, Math.floor(Math.random()*n));
     var path = mazeGen.findShortestPath(start, end);
     
     
@@ -35,7 +35,7 @@ function main () {
     ctx.beginPath();
     ctx.moveTo(0+ctx.lineWidth/2, 0+ctx.lineWidth/2);
     
-    var i = 0, time = 100;
+    var i = 0, time = 10;
     drawMaze();
     
     function drawMaze() {
@@ -43,6 +43,11 @@ function main () {
         
         ctx.lineTo((width/n*maze[i].x)+ctx.lineWidth/2, (height/n*maze[i].y) + ctx.lineWidth/2);
         ctx.stroke();
+
+        ctx.fillStyle = "#00ff00";
+        ctx.fillRect(start.x, height/n*start.y, ctx.lineWidth, ctx.lineWidth);
+        ctx.fillStyle = "#ff0000";
+        ctx.fillRect(width/n*end.x, height/n*end.y, ctx.lineWidth, ctx.lineWidth);
         
         i++;
         if (i < maze.length) {
@@ -57,6 +62,7 @@ function main () {
             // ctx.clearRect(0,0,width,height);
             // ctx.lineWidth = 1;
             ctx.beginPath();
+            ctx.moveTo(width/n*end.x, height/n*end.y);
             time = 100;
             drawPath();
             // drawMaze();
