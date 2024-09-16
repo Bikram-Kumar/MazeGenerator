@@ -10,11 +10,9 @@ class MazeManager {
     // generates a new maze and stores it in `this.maze`
     generate() {
         this.maze = []; 
+        var size = this.size;
         
-        var visited = new Array(this.size);
-        for (var i = 0; i < this.size; i++) {
-            visited[i] = false;
-        }
+        var visited = new Array(size); 
 
         var neigh = [], node = new Vector2(0,0);
         var stack = [node];
@@ -33,8 +31,8 @@ class MazeManager {
             neigh = this.getNeighbors(node);
             MazeManager.randomizeNeighborsArray(neigh);
             
-            for (var n of neigh) {
-                if ((n != null) && (!visited[this.getIndexOf(n)]) && (!Vector2.areEqual(n, node))) {
+            for (let n of neigh) {
+                if ((n != null) && (!visited[this.getIndexOf(n)])) {
                     stack.push(node);
                     stack.push(n);
                     break;
@@ -47,12 +45,65 @@ class MazeManager {
     }
 
 
-    // finds and returns shortest path between `start` and `end` nodes in current `this.maze`
-    findShortestPath(start, end) {
+    // finds and returns shortest path between `start` and `end` nodes in `maze`
+    findShortestPath(start, end, maze = this.maze) {
         var path = [];
+        var size = this.size;
+        var neighbors = new Array(size);
+        var index; // variable used to store temporary indices
+        
+        // setup neighbors array from maze data for each node
+        for (let i = 0; i < maze.length - 1; i++) {
+            index = this.getIndexOf(maze[i]);
+            if (neighbors[index] == undefined) {
+                neighbors[index] = [maze[i+1]];
+            } else {
+                neighbors[index].push(maze[i+1]);
+            }
+        }
+        
+        var node, nodeDist;
+        var queue = [start];
+        var prev = new Array(size);
+        var distances = new Array(size);
+        distances[this.getIndexOf(start)] = 0;
+        
+        while (queue.length) {
+            queue.sort();
+            node = queue.shift();
+
+            index = this.getIndexOf(node);
+            
+            path.push(node);
+
+            
+            for (let n of neighbors[index]) {
+                index = this.getIndexOf(n);
+                nodeDist = distances[this.getIndexOf(node)] + 1;
+                
+                if (distances[index] == undefined) {
+                    
+                    distances[index] = nodeDist;
+                    prev[index] = node;
+                    queue.push(n);
+                    if (Vector2.areEqual(node, end)) {
+                        break;
+                    }
+                    
+                } else if (distances[index] > nodeDist) {
+                    
+                    distances[index] = nodeDist;
+                    prev[index] = node;
+
+                }
+
+            }
+        }
 
 
-        return path;
+        console.log(path);
+
+        return prev;
     }
 
 
