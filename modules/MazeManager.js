@@ -101,7 +101,7 @@ class MazeManager {
         }
 
 
-        console.log(path);
+        // console.log(path);
 
         return prev;
     }

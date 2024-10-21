@@ -1,8 +1,96 @@
 body {
     background-color: rgb(37, 37, 37);
+
 }
 
-canvas {
-    background-color: #000000;
-    
+#main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
+
+#cnvs-container {
+    display: flex;
+    justify-content: center;
+    background-color: #1a1a1a;
+}
+
+
+#control-bar-container {
+    background-color: #222222;
+    position: relative;
+    text-align: center;
+}
+
+
+img {
+    display: none;
+}
+
+
+#speed-controller {
+    margin: 20px 20px;
+    width: 300px;
+    appearance: none;
+    background: #a0a0a0;
+    border-radius: 20px;
+    opacity: 0.8;
+}
+#speed-controller:hover {
+    opacity: 1;
+}
+
+
+.big-btn {
+    width: 200px;
+    height: 30px;
+    border-style: none;
+    border-radius: 20px;
+    background-color: #32ff32;
+    margin: 20px 20px;
+    opacity: 1;
+}
+
+.big-btn:hover {
+    opacity: 0.9;    
+}
+.big-btn:active {
+    opacity: 0.7;    
+
+}
+
+#cnvs {
+    background-color: #000000;
+    width: 512px;
+    height: auto;
+}
+
+
+
+input[type="number"] {
+    width: 100px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.white-text {
+    color: #ffffff;
+}
+.grey-text {
+    color: #dadada;
+}
+
+
+
+
+
+

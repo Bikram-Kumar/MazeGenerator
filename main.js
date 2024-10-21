@@ -1,104 +1,165 @@
 
 
+class Main {
+    
+    static mazeDim;
+    static drawSpeed;
+    static ctx;
+    static strokeStyles;
+    static mazeGen;
+    static start;
+    static end;
 
-function main () {
-    var canvas = document.getElementById("cnvs");
-    var width = 256;
-    var height = 256;
-    canvas.width = width;
-    canvas.height = height;
-    var ctx = canvas.getContext("2d");
-    
-    // var imgData = new ImageData(255, 255);
 
-    var n = 32;
+
+
+    static main () {
+
+        this.initialize();
     
-    var canvasDim = new Vector2(n, n);
-    var mazeGen = new MazeManager(canvasDim);
-    mazeGen.generate();
-    var maze = mazeGen.maze;
-    var start = new Vector2(0, Math.floor(Math.random()*n));
-    var end = new Vector2(n-1, Math.floor(Math.random()*n));
-    var path = mazeGen.findShortestPath(start, end);
-    
-    
-    
-    // console.log(maze);
-    var strokeStyles = [
-        // "#00ff00",
-        "#ffffff",
-        // "#ff0000",
-        // "#0000ff",
-    ];
-    ctx.lineWidth = width/n*0.5;
-    ctx.lineJoin = "round";
-    ctx.beginPath();
-    ctx.moveTo(0+ctx.lineWidth/2, 0+ctx.lineWidth/2);
-    
-    var i = 0, time = 10;
-    drawMaze();
-    
-    function drawMaze() {
-        ctx.strokeStyle = strokeStyles[i % strokeStyles.length];
+        this.ctx = document.getElementById("cnvs").getContext("2d");
+
+        this.ctx.canvas.width = 512;
+        this.ctx.canvas.height = 512;
         
-        ctx.lineTo((width/n*maze[i].x)+ctx.lineWidth/2, (height/n*maze[i].y) + ctx.lineWidth/2);
-        ctx.stroke();
-
-        ctx.fillStyle = "#00ff00";
-        ctx.fillRect(start.x, height/n*start.y, ctx.lineWidth, ctx.lineWidth);
-        ctx.fillStyle = "#ff0000";
-        ctx.fillRect(width/n*end.x, height/n*end.y, ctx.lineWidth, ctx.lineWidth);
         
-        i++;
-        if (i < maze.length) {
-            setTimeout(() => {
-                drawMaze();
-            }, time);
-        } else {
-            i = mazeGen.getIndexOf(end);
-            // location.reload();
-            // maze = path;
-            // i = 0;
-            // ctx.clearRect(0,0,width,height);
-            // ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(width/n*end.x, height/n*end.y);
-            time = 100;
-            drawPath();
-            // drawMaze();
-        }
+        
+        var bgimg = document.querySelector("img");
+        var bg = this.ctx.createPattern(bgimg, "repeat");
+        
+
+        this.strokeStyles = [
+            // "#00ff00",
+            "#ffffff",
+            // bg,
+            // "#ff0000",
+            // "#0000ff",
+        ];
+        
+        
+        
     }
 
-
-
-    function drawPath() {
-        ctx.strokeStyle = "#00ff00";
-        
-        ctx.lineTo((width/n*path[i].x)+ctx.lineWidth/2, (height/n*path[i].y) + ctx.lineWidth/2);
-        ctx.stroke();
-        i = mazeGen.getIndexOf(path[i]);
-        
-        if (path[i] != undefined) {
-            setTimeout(() => {
-                drawPath();
-            }, time);
-        } else {
-            // location.reload();
+    static initialize() {
+        var mazeWidthInput = document.getElementById("maze-width-input");
+        var mazeHeightInput = document.getElementById("maze-height-input");
+        var speedController = document.getElementById("speed-controller");
+        var generateBtn = document.getElementById("generate-btn");
+        var solveBtn = document.getElementById("solve-btn");
+    
+        mazeWidthInput.onchange = () => {Main.mazeDim.x = mazeWidthInput.value;}
+        mazeHeightInput.onchange = () => {Main.mazeDim.y = mazeHeightInput.value;}
+        speedController.onchange = () => {Main.drawSpeed = 200 - speedController.value;}
+        generateBtn.onclick = () => {Main.generateMaze();}
+        solveBtn.onclick = () => {Main.solveMaze();}
+    
+        Main.mazeDim = new Vector2(mazeWidthInput.value, mazeHeightInput.value);
+        speedController.onchange();
+    
+    
+        // adding a swap method to Array prototype for ease
+        Array.prototype.swap = function(i, j) {
+            var temp = this[i];
+            this[i] = this[j];
+            this[j] = temp;
         }
+    
     }
+    
+    
+    static generateMaze () {
+        
+        this.start = new Vector2(0, Math.floor(Math.random()*this.mazeDim.x));
+        this.end = new Vector2(this.mazeDim.x-1, Math.floor(Math.random()*this.mazeDim.x));
+        
+        var width = this.ctx.canvas.width;
+        var height = this.ctx.canvas.height;
+        var ctx = this.ctx;
+        
+        this.mazeGen = new MazeManager(this.mazeDim)
+        this.mazeGen.generate();
+        var maze = this.mazeGen.maze;
+        
+        
+        
+        
+        
+        // console.log(maze);
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.lineWidth = width/this.mazeDim.x*0.5;
+        ctx.beginPath();
+        ctx.moveTo(0+ctx.lineWidth/2, 0+ctx.lineWidth/2);
+        
+        var i = 0;
+        drawMaze();
+        
+        
  
+        
+        function drawMaze() {
+            ctx.strokeStyle = Main.strokeStyles[i % Main.strokeStyles.length];
+            ctx.lineTo((width/Main.mazeDim.x*maze[i].x)+ctx.lineWidth/2, (height/Main.mazeDim.x*maze[i].y) + ctx.lineWidth/2);
+            ctx.stroke();
+    
+
+            // draw start and end nodes each time so that it does not get overridden
+            ctx.fillStyle = "#00ff00";
+            ctx.fillRect(Main.start.x, height/Main.mazeDim.x*Main.start.y, ctx.lineWidth, ctx.lineWidth);
+            ctx.fillStyle = "#ff0000";
+            ctx.fillRect(width/Main.mazeDim.x*Main.end.x, height/Main.mazeDim.x*Main.end.y, ctx.lineWidth, ctx.lineWidth);
+            
+            i++;
+            if (i < maze.length) {
+                setTimeout(() => {
+                    drawMaze();
+                }, Main.drawSpeed);
+            } 
+        }
+    
+
+
+    }
+
+    static solveMaze () {
+
+        var width = this.ctx.canvas.width;
+        var height = this.ctx.canvas.height;
+        var ctx = this.ctx;
+
+
+        var i = Main.mazeGen.getIndexOf(Main.end);
+
+        ctx.beginPath();
+        ctx.moveTo(width/Main.mazeDim.x*Main.end.x+ctx.lineWidth/2, height/Main.mazeDim.x*Main.end.y+ctx.lineWidth/2);
+               
+        var path = this.mazeGen.findShortestPath(this.start, this.end);
+        drawPath();
+
+        function drawPath() {
+            ctx.strokeStyle = "#00ff00";
+            
+            ctx.lineTo((width/Main.mazeDim.x*path[i].x)+ctx.lineWidth/2, (height/Main.mazeDim.x*path[i].y) + ctx.lineWidth/2);
+            ctx.stroke();
+            i = Main.mazeGen.getIndexOf(path[i]);
+            
+            if (path[i] != undefined) {
+                setTimeout(() => {
+                    drawPath();
+                }, Main.drawSpeed);
+            }
+        }
+    }
 }
 
 
 
-// adding a swap method to Array prototype for ease
-Array.prototype.swap = function(i, j) {
-    var temp = this[i];
-    this[i] = this[j];
-    this[j] = temp;
-}
 
 
 
 
-main();
+
+
+
+
+window.onload = () => {Main.main();};

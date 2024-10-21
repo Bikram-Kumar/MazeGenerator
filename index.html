@@ -9,7 +9,29 @@
 </head>
 
 <body>
-    <canvas id="cnvs" width="256" height="256"></canvas>
+    
+    <img src="./assets/images/TileableBG.png" />
+
+    <div id="main-container">
+
+        <div id="cnvs-container">
+            <canvas id="cnvs" width="256" height="256"></canvas>      
+        </div>
+
+        <div id="control-bar-container">
+            <span class="grey-text">Dimensions: </span>
+            <input type="number" id="maze-width-input" value="32">
+            <input type="number" id="maze-height-input" value="32">
+            <br>
+            <input type="range" id="speed-controller" min="1" max="200" value="180">
+            <br>
+            <button id="generate-btn" class="big-btn white-text">Generate</button>
+            <button id="solve-btn" class="big-btn white-text">Solve</button>
+        </div>
+
+
+    </div>
+    
     <script src="./modules/Vector2.js"></script>
     <script src="./modules/MazeManager.js"></script>
     <script src="./main.js"></script>
