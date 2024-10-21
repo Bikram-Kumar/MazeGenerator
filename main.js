@@ -47,14 +47,14 @@ class Main {
         var generateBtn = document.getElementById("generate-btn");
         var solveBtn = document.getElementById("solve-btn");
     
-        mazeWidthInput.onchange = () => {Main.mazeDim.x = mazeWidthInput.value;}
-        mazeHeightInput.onchange = () => {Main.mazeDim.y = mazeHeightInput.value;}
-        speedController.onchange = () => {Main.drawSpeed = 200 - speedController.value;}
+        mazeWidthInput.oninput = () => {Main.mazeDim.x = mazeWidthInput.value;}
+        mazeHeightInput.oninput = () => {Main.mazeDim.y = mazeHeightInput.value;}
+        speedController.oninput = () => {Main.drawSpeed = 200 - speedController.value;}
         generateBtn.onclick = () => {Main.generateMaze();}
         solveBtn.onclick = () => {Main.solveMaze();}
     
         Main.mazeDim = new Vector2(mazeWidthInput.value, mazeHeightInput.value);
-        speedController.onchange();
+        speedController.oninput();
     
     
         // adding a swap method to Array prototype for ease
