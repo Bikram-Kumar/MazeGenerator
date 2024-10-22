@@ -9,18 +9,18 @@ class Main {
     static mazeGen;
     static start;
     static end;
+    static controls;
 
 
 
 
     static main () {
 
-        this.initialize();
-    
+        
         this.ctx = document.getElementById("cnvs").getContext("2d");
 
-        this.ctx.canvas.width = 512;
-        this.ctx.canvas.height = 512;
+        // this.ctx.canvas.width = 512;
+        // this.ctx.canvas.height = 512;
         
         
         
@@ -36,6 +36,7 @@ class Main {
             // "#0000ff",
         ];
         
+        this.initialize();
         
         
     }
@@ -43,18 +44,44 @@ class Main {
     static initialize() {
         var mazeWidthInput = document.getElementById("maze-width-input");
         var mazeHeightInput = document.getElementById("maze-height-input");
+        var mazeGapInput = document.getElementById("maze-gap-input");
         var speedController = document.getElementById("speed-controller");
         var generateBtn = document.getElementById("generate-btn");
         var solveBtn = document.getElementById("solve-btn");
     
-        mazeWidthInput.oninput = () => {Main.mazeDim.x = mazeWidthInput.value;}
-        mazeHeightInput.oninput = () => {Main.mazeDim.y = mazeHeightInput.value;}
+        mazeWidthInput.oninput = () => {
+            Main.mazeDim.x = mazeWidthInput.value;
+            this.ctx.canvas.width = mazeGapInput.value * mazeWidthInput.value;
+        }
+
+
+        mazeHeightInput.oninput = () => {
+            Main.mazeDim.y = mazeHeightInput.value;
+            this.ctx.canvas.height = mazeGapInput.value * mazeHeightInput.value;
+        }
+        
+        
+        mazeGapInput.oninput = () => {
+            mazeHeightInput.oninput();
+            mazeWidthInput.oninput();
+        }
+
+
+
+
+
         speedController.oninput = () => {Main.drawSpeed = 200 - speedController.value;}
         generateBtn.onclick = () => {Main.generateMaze();}
         solveBtn.onclick = () => {Main.solveMaze();}
     
         Main.mazeDim = new Vector2(mazeWidthInput.value, mazeHeightInput.value);
+
+        // sync values
         speedController.oninput();
+        mazeGapInput.oninput();
+
+
+        this.controls = [mazeWidthInput, mazeHeightInput, mazeGapInput, generateBtn, solveBtn];
     
     
         // adding a swap method to Array prototype for ease
@@ -68,9 +95,10 @@ class Main {
     
     
     static generateMaze () {
+        this.setControlsState(false);
         
-        this.start = new Vector2(0, Math.floor(Math.random()*this.mazeDim.x));
-        this.end = new Vector2(this.mazeDim.x-1, Math.floor(Math.random()*this.mazeDim.x));
+        this.start = new Vector2(0, Math.floor(Math.random()*this.mazeDim.y));
+        this.end = new Vector2(this.mazeDim.x-1, Math.floor(Math.random()*this.mazeDim.y));
         
         var width = this.ctx.canvas.width;
         var height = this.ctx.canvas.height;
@@ -99,22 +127,24 @@ class Main {
         
         function drawMaze() {
             ctx.strokeStyle = Main.strokeStyles[i % Main.strokeStyles.length];
-            ctx.lineTo((width/Main.mazeDim.x*maze[i].x)+ctx.lineWidth/2, (height/Main.mazeDim.x*maze[i].y) + ctx.lineWidth/2);
+            ctx.lineTo((width/Main.mazeDim.x*maze[i].x)+ctx.lineWidth/2, (height/Main.mazeDim.y*maze[i].y) + ctx.lineWidth/2);
             ctx.stroke();
     
 
             // draw start and end nodes each time so that it does not get overridden
             ctx.fillStyle = "#00ff00";
-            ctx.fillRect(Main.start.x, height/Main.mazeDim.x*Main.start.y, ctx.lineWidth, ctx.lineWidth);
+            ctx.fillRect(Main.start.x, height/Main.mazeDim.y*Main.start.y, ctx.lineWidth, ctx.lineWidth);
             ctx.fillStyle = "#ff0000";
-            ctx.fillRect(width/Main.mazeDim.x*Main.end.x, height/Main.mazeDim.x*Main.end.y, ctx.lineWidth, ctx.lineWidth);
+            ctx.fillRect(width/Main.mazeDim.x*Main.end.x, height/Main.mazeDim.y*Main.end.y, ctx.lineWidth, ctx.lineWidth);
             
             i++;
             if (i < maze.length) {
                 setTimeout(() => {
                     drawMaze();
                 }, Main.drawSpeed);
-            } 
+            } else {
+                Main.setControlsState(true);
+            }
         }
     
 
@@ -122,6 +152,7 @@ class Main {
     }
 
     static solveMaze () {
+        this.setControlsState(false);
 
         var width = this.ctx.canvas.width;
         var height = this.ctx.canvas.height;
@@ -131,7 +162,7 @@ class Main {
         var i = Main.mazeGen.getIndexOf(Main.end);
 
         ctx.beginPath();
-        ctx.moveTo(width/Main.mazeDim.x*Main.end.x+ctx.lineWidth/2, height/Main.mazeDim.x*Main.end.y+ctx.lineWidth/2);
+        ctx.moveTo(width/Main.mazeDim.x*Main.end.x+ctx.lineWidth/2, height/Main.mazeDim.y*Main.end.y+ctx.lineWidth/2);
                
         var path = this.mazeGen.findShortestPath(this.start, this.end);
         drawPath();
@@ -139,7 +170,7 @@ class Main {
         function drawPath() {
             ctx.strokeStyle = "#00ff00";
             
-            ctx.lineTo((width/Main.mazeDim.x*path[i].x)+ctx.lineWidth/2, (height/Main.mazeDim.x*path[i].y) + ctx.lineWidth/2);
+            ctx.lineTo((width/Main.mazeDim.x*path[i].x)+ctx.lineWidth/2, (height/Main.mazeDim.y*path[i].y) + ctx.lineWidth/2);
             ctx.stroke();
             i = Main.mazeGen.getIndexOf(path[i]);
             
@@ -147,9 +178,26 @@ class Main {
                 setTimeout(() => {
                     drawPath();
                 }, Main.drawSpeed);
+            } else {
+                Main.setControlsState(true);
             }
         }
     }
+
+
+    static setControlsState (shouldWork) {
+        if (shouldWork) {
+            for (let i = 0; i < this.controls.length; i++) {
+                this.controls[i].removeAttribute("disabled");
+            }
+        } else {
+            for (let i = 0; i < this.controls.length; i++) {
+                this.controls[i].setAttribute("disabled", "");
+            }
+        }
+    }
+
+    
 }
 
 
