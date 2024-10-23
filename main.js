@@ -164,7 +164,7 @@ class Main {
         ctx.beginPath();
         ctx.moveTo(width/Main.mazeDim.x*Main.end.x+ctx.lineWidth/2, height/Main.mazeDim.y*Main.end.y+ctx.lineWidth/2);
                
-        var path = this.mazeGen.findShortestPath(this.start, this.end);
+        var path = this.mazeGen.findPath(this.start, this.end);
         drawPath();
 
         function drawPath() {

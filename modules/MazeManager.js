@@ -45,8 +45,8 @@ class MazeManager {
     }
 
 
-    // finds and returns shortest path between `start` and `end` nodes in `maze`
-    findShortestPath(start, end, maze = this.maze) {
+    // finds and returns path between `start` and `end` nodes in `maze`
+    findPath(start, end, maze = this.maze) {
         var path = [];
         var size = this.size;
         var neighbors = new Array(size);
@@ -69,7 +69,6 @@ class MazeManager {
         distances[this.getIndexOf(start)] = 0;
         
         while (queue.length) {
-            queue.sort();
             node = queue.shift();
 
             index = this.getIndexOf(node);
@@ -90,16 +89,9 @@ class MazeManager {
                         break;
                     }
                     
-                } else if (distances[index] > nodeDist) {
-                    
-                    distances[index] = nodeDist;
-                    prev[index] = node;
-
                 }
-
             }
         }
-
 
         // console.log(path);
 
